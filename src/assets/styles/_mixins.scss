@@ -1,0 +1,308 @@
+@import '_variables.scss';
+
+// css prefix
+@mixin css3-prefix($property, $value) {
+  -webkit-#{$property}: #{$value};
+  -khtml-#{$property}: #{$value};
+  -moz-#{$property}: #{$value};
+  -ms-#{$property}: #{$value};
+  -o-#{$property}: #{$value};
+  #{$property}: #{$value};
+}
+
+// border radius
+@mixin border-radius($radius: 5px) {
+  @include css3-prefix('border-radius', $radius);
+}
+
+// border radius separate
+@mixin border-radius-separate($topLeftRadius: 5px, $topRightRadius: 5px, $bottomLeftRadius: 5px, $bottomRightRadius: 5px) {
+  -webkit-border-top-left-radius: $topLeftRadius;
+  -webkit-border-top-right-radius: $topRightRadius;
+  -webkit-border-bottom-right-radius: $bottomRightRadius;
+  -webkit-border-bottom-left-radius: $bottomLeftRadius;
+  -moz-border-radius-topleft: $topLeftRadius;
+  -moz-border-radius-topright: $topRightRadius;
+  -moz-border-radius-bottomright: $bottomRightRadius;
+  -moz-border-radius-bottomleft: $bottomLeftRadius;
+  border-top-left-radius: $topLeftRadius;
+  border-top-right-radius: $topRightRadius;
+  border-bottom-right-radius: $bottomRightRadius;
+  border-bottom-left-radius: $bottomLeftRadius;
+}
+
+// box shadow
+@mixin box-shadow($x: 2px, $y: 2px, $blur: 5px, $color: rgba(0, 0, 0, .4), $inset: "") {
+  @if ($inset !="") {
+    @include css3-prefix('box-shadow', $inset $x $y $blur $color);
+  }
+
+  @else {
+    @include css3-prefix('box-shadow', $x $y $blur $color);
+  }
+}
+
+// box sizing
+@mixin box-sizing($type: border-box) {
+  @include css3-prefix('box-sizing', $type);
+}
+
+// opacity
+@mixin opacity($opacity: 0.5) {
+  $opacityMultiplied: ($opacity * 100);
+  filter: alpha(opacity=$opacityMultiplied);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity="+ $opacityMultiplied + ")";
+  @include css3-prefix('opacity', $opacity);
+}
+
+// uotline radius
+@mixin outline-radius($radius: 5px) {
+  @include css3-prefix('outline-radius', $radius);
+}
+
+// text shadow
+@mixin text-shadow($x: 2px, $y: 2px, $blur: 5px, $color: rgba(0, 0, 0, .4)) {
+  text-shadow: $x $y $blur $color;
+}
+
+// keyframes
+@mixin keyframes($animation-name) {
+  @-webkit-keyframes #{$animation-name} {
+    @content;
+  }
+
+  @-moz-keyframes #{$animation-name} {
+    @content;
+  }
+
+  @-ms-keyframes #{$animation-name} {
+    @content;
+  }
+
+  @-o-keyframes #{$animation-name} {
+    @content;
+  }
+
+  @keyframes #{$animation-name} {
+    @content;
+  }
+}
+
+// 
+@mixin absolute-full {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0
+}
+
+// clear fix
+@mixin clearfix {
+
+  &:before,
+  &:after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+}
+
+// convert font size to vw pc (1920px)
+@mixin vw-font-size-pc($pc-pixel) {
+  font-size: $pc-pixel*100/1920*1vw;
+}
+
+// convert font size to vw tb (1024px)
+@mixin vw-font-size-tb($tb-pixel) {
+  font-size: $tb-pixel*100/360*1vw;
+}
+
+// convert px to vw pc
+@mixin vw-convert-pc($property, $pc-pixel) {
+  @if type-of($pc-pixel)==number {
+    #{$property}: calc($pc-pixel*100/1920*1vw);
+
+    @media (min-width: $screen-xlg + 1) {
+      #{$property}: $pc-pixel*1px;
+    }
+  }
+
+  @else if type-of($pc-pixel)==string {
+    #{$property}: auto;
+
+    @media (min-width: $screen-xlg + 1) {
+      #{$property}: auto;
+    }
+  }
+
+  @else if type-of($pc-pixel)==list {
+    $px: ();
+    $vw: ();
+
+    @each $value in $pc-pixel {
+      @if type-of($value)==number {
+        $vw: append($vw, $value*100/1920*1vw);
+        $px: append($px, $value*1px);
+      }
+
+      @else if type-of($value)==string {
+        $vw: append($vw, auto);
+        $px: append($px, auto);
+      }
+    }
+
+    #{$property}: $vw;
+
+    @media (min-width: $screen-xlg + 1) {
+      #{$property}: $px;
+    }
+  }
+}
+
+// convert px to vw tablet (vw follow 360)
+// @mixin vw-convert-tb($property, $tb-pixel) {
+// 	@if type-of($tb-pixel)==number {
+// 		#{$property}: calc($tb-pixel*100/360*1vw);
+// 		@media (max-width: $screen-md) {
+// 		}
+// 	}
+
+// 	@else if type-of($tb-pixel)==string {
+// 		@media (max-width: $screen-md) {
+// 			#{$property}: auto;
+// 		}
+// 	}
+
+// 	@else if type-of($tb-pixel)==list {
+// 		$vw: ();
+
+// 		@each $value in $tb-pixel {
+// 			@if type-of($value)==number {
+// 				$vw: append($vw, $value*100/360*1vw);
+// 			}
+
+// 			@else if type-of($value)==string {
+// 				$vw: append($vw, auto);
+// 			}
+// 		}
+
+// 		@media (max-width: $screen-md) {
+// 			#{$property}: $vw;
+// 		}
+// 	}
+// }
+@mixin vw-convert-mo($property, $tb-pixel) {
+  @if type-of($tb-pixel)==number {
+    #{$property}: calc($tb-pixel*100/360*1vw);
+  }
+
+  @else if type-of($tb-pixel)==string {
+    #{$property}: auto;
+  }
+
+  @else if type-of($tb-pixel)==list {
+    $vw: ();
+
+    @each $value in $tb-pixel {
+      @if type-of($value)==number {
+        $vw: append($vw, $value*100/360*1vw);
+      }
+
+      @else if type-of($value)==string {
+        $vw: append($vw, auto);
+      }
+    }
+
+    #{$property}: $vw;
+  }
+}
+
+@mixin px2vw($property, $pixel, $breakPoint) {
+  @if type-of($pixel)==number {
+    #{$property}: calc($pixel*100/$breakPoint*1vw);
+  }
+
+  @else if type-of($pixel)==string {
+    #{$property}: auto;
+  }
+
+  @else if type-of($pixel)==list {
+    $vw: ();
+
+    @each $value in $pixel {
+      @if type-of($value)==number {
+        $vw: append($vw, $value*100/$breakPoint*1vw);
+      }
+
+      @else if type-of($value)==string {
+        $vw: append($vw, auto);
+      }
+    }
+
+    #{$property}: $vw;
+  }
+}
+
+// line camp
+@mixin multi-ellipsis($line) {
+  display: block;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: $line;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}
+
+// breakpoint
+@mixin breakpoint($point) {
+
+  @if $point == overSize {
+    @media screen and (min-width: $screen-xlg + 1) {
+      @content;
+    }
+  }
+
+  @if $point==pc {
+    @media screen and (min-width: $screen-sm + 1) {
+      @content;
+    }
+  }
+
+  @if $point==pc2 {
+    @media screen and (min-width: 1441px) and (max-width: $screen-xlg) {
+      @content;
+    }
+  }
+
+  @if $point==pc3 {
+    @media screen and (min-width: 1281px) and (max-width: $screen-lg) {
+      @content;
+    }
+  }
+
+  @if $point==pc4 {
+    @media screen and (min-width: 1025px) and (max-width: $screen-md) {
+      @content;
+    }
+  }
+
+  @if $point==pc5 {
+    @media screen and (min-width: 1025px) and (max-width: 1025px) {
+      @content;
+    }
+  }
+
+  @if $point==tablet {
+    @media screen and (min-width: 721px) and (max-width: $screen-sm) {
+      @content;
+    }
+  }
+
+  @if $point==mo {
+    @media screen and (max-width: $screen-mo) {
+      @content;
+    }
+  }
+}
